@@ -193,7 +193,8 @@ public fun AnimatedNavHost(
         }
 
         val finalExit: AnimatedContentScope<NavBackStackEntry>.() -> ExitTransition = {
-            val initialDestination = initialState.destination as AnimatedComposeNavigator.Destination
+            val initialDestination =
+                initialState.destination as AnimatedComposeNavigator.Destination
 
             if (composeNavigator.isPop.value) {
                 initialDestination.popExitTransition?.invoke(this) ?: popExitTransitions[
@@ -217,7 +218,11 @@ public fun AnimatedNavHost(
         val transition = updateTransition(backStackEntry, label = "entry")
         transition.AnimatedContent(
             modifier,
-            transitionSpec = { finalEnter(this) with finalExit(this) },
+            transitionSpec = {
+                (finalEnter(this) with finalExit(this)).apply {
+                    targetContentZIndex = if (composeNavigator.isPop.value) -1f else 1f
+                }
+            },
             contentAlignment,
             contentKey = { it.id }
         ) {
